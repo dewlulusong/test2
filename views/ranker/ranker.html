@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+    <meta name="format-detection" content="telephone=no,email=no">
+    <base href="../../"/>
+    <title>华夏E家保准客户排行榜</title>
+    <link href="gv/common/css/reset.css" rel="stylesheet" type="text/css">
+    <link href="gv/common/css/main.css" rel="stylesheet" type="text/css">
+    <link href="gv/ranker/css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div class="combox" id="app" v-cloak>
+        <section class="rank_top">
+            <p class="rank_date">更新时间：{{date}}</p>
+            <p class="rank_slide">
+                <span :class="state == '0' ? 'today act' : 'today'" @click="switchTab('0')">今日</span>
+                <span :class="state == '1' ? 'total act' : 'total'" @click="switchTab('1')">累计</span>
+            </p>
+            <div class="search">
+                <input v-if="rptType == '1'" type="text" placeholder="输入分公司代码或名称查询" v-model="param" @blur="search">
+                <input v-if="rptType == '2'" type="text" placeholder="输入分公司名称显示所有中支" v-model="param" @blur="search">
+                <input v-if="rptType == '3'" type="text" placeholder="输入分公司名称显示所有营服" v-model="param" @blur="search">
+                <span v-if="rptType != '4'"></span>
+            </div>
+        </section>
+        <ul :class="isFix ? 'title1 title1_fixed' : 'title1'">
+            <li :class="rptType == '1' ? 'act' : ''" @click="switchTab2('1')">分公司</li>
+	        <li :class="rptType == '2' ? 'act' : ''" @click="switchTab2('2')">中支</li>
+	        <li :class="rptType == '3' ? 'act' : ''" @click="switchTab2('3')">营服</li>
+	        <li :class="rptType == '4' ? 'act' : ''" @click="switchTab2('4')">个人</li>
+        </ul>
+        <!--分公司-->
+        <section class="list" v-show="rptType == '1'">
+            <div :class="isFix ? 'title2 five title2_fixed' : 'title2 five'">
+                <span>排名</span>
+                <span>分公司</span>
+                <span>业务员<br/>参与人数</span>
+                <span>准客户<br/>人数</span>
+                <span>测算份数</span>
+            </div>
+            <ul :class="isFix ? 'pad' : ''">
+                <li class="list_item five" v-for="(item,index) in list">
+                    <span v-if="item.orderNum < 4" :class="'rank_'+item.orderNum"></span>
+                    <span v-else>{{item.orderNum}}</span>
+                    <span>{{item.branchName}}</span>
+                    <span>{{item.agentCount}}</span>
+                    <span>{{item.userCount}}</span>
+                    <span>{{item.amountCount}}</span>
+                </li>
+                <li class="list_item five">
+                    <span></span>
+                    <span>总计</span>
+                    <span>{{totalAgentCount}}</span>
+                    <span>{{totalUserCount}}</span>
+                    <span>{{totalAmountCount}}</span>
+                </li>
+            </ul>
+        </section>
+        <!--中支-->
+        <section class="list" v-show="rptType == '2'">
+            <div :class="isFix ? 'title2 six title2_fixed' : 'title2 six'">
+                <span>排名</span>
+                <span>分公司</span>
+                <span>中支</span>
+                <span>业务员<br/>参与人数</span>
+                <span>准客户<br/>人数</span>
+                <span>测算份数</span>
+            </div>
+            <ul :class="isFix ? 'pad' : ''">
+                <li class="list_item six" v-for="(item,index) in list">
+                    <span v-if="item.orderNum < 4" :class="'rank_'+item.orderNum"></span>
+                    <span v-else>{{item.orderNum}}</span>
+                    <span>{{item.branchName}}</span>
+                    <span>{{item.orgName}}</span>
+                    <span>{{item.agentCount}}</span>
+                    <span>{{item.userCount}}</span>
+                    <span>{{item.amountCount}}</span>
+                </li>
+            </ul>
+        </section>
+        <!--营服-->
+        <section class="list" v-show="rptType == '3'">
+            <div :class="isFix ? 'title2 six title2_fixed' : 'title2 six'">
+                <span>排名</span>
+                <span>分公司</span>
+                <span>营服</span>
+                <span>业务员<br/>参与人数</span>
+                <span>准客户<br/>人数</span>
+                <span>测算份数</span>
+            </div>
+            <ul :class="isFix ? 'pad' : ''">
+                <li class="list_item six" v-for="(item,index) in list">
+                    <span v-if="item.orderNum < 4" :class="'rank_'+item.orderNum"></span>
+                    <span v-else>{{item.orderNum}}</span>
+                    <span>{{item.branchName}}</span>
+                    <span>{{item.orgName}}</span>
+                    <span>{{item.agentCount}}</span>
+                    <span>{{item.userCount}}</span>
+                    <span>{{item.amountCount}}</span>
+                </li>
+            </ul>
+        </section>
+        <!--个人-->
+        <section class="list" v-show="rptType == '4'">
+            <div :class="isFix ? 'title2 five title2_fixed' : 'title2 five'">
+                <span>排名</span>
+                <span>分公司</span>
+                <span>业务员</span>
+                <span>准客户<br/>人数</span>
+                <span>测算份数</span>
+            </div>
+            <ul :class="isFix ? 'pad' : ''">
+                <li class="list_item five" v-for="(item,index) in list">
+                    <span v-if="item.orderNum < 4" :class="'rank_'+item.orderNum"></span>
+                    <span v-else>{{item.orderNum}}</span>
+                    <span>{{item.branchName}}</span>
+                    <span>{{item.agentName}}</span>
+                    <span>{{item.userCount}}</span>
+                    <span>{{item.amountCount}}</span>
+                </li>
+            </ul>
+        </section>
+    </div>
+</body>
+<script type="text/javascript" src="gv/common/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="gv/common/js/vue.js"></script>
+<script type="text/javascript" src="gv/common/js/main.js"></script>
+<script type="text/javascript" src="gv/common/js/weChat_share_nosave.js"></script>
+<script type="text/javascript" src="gv/ranker/js/ranker.js"></script>
+</html>
